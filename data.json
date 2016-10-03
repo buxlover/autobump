@@ -1,0 +1,12 @@
+{
+    "file": "data.json",
+    "settings": {
+        "username": "bitcointalk username",
+        "password": "base64 encoded password",
+        "cookieLength": "-1",
+        "msgToPost": "BUMP"
+    },
+    "threads": [{
+        "url": "url"
+    }]
+}
