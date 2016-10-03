@@ -40,7 +40,7 @@ Well. Let's say  this is version 0.0, shall we? That's bad, what happened to pro
  Under **settings** add you __username__ and __password__ to your [BitcoinTalk](https:bitcointalk.org) account. And beware, you must add your password as **Base64 Encoded**. You can do that [here](https://www.base64decode.org/)!
 
 ## Add Threads
- I think you have guessed how to threads to **data.json** file.
+ I think you have guessed how to add threads to **data.json** file.
 
  No? FINE
 
