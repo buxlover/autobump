@@ -239,13 +239,16 @@ function bumpIt(&$webClient,$replyURL){
     curl_setopt($webClient,CURLOPT_POSTFIELDS,$postData);
     $url=curl_getinfo($webClient,CURLINFO_EFFECTIVE_URL);
     $htmlAfterSubmit=curl_exec($webClient);
-    $posts=getPosts($htmlAfterSubmit,$url,true);
-    if($posts===false){
-        return false;
-    }
-    foreach($posts->posts as $post){
-        if($post->by==$data->settings->username && $post->content=$data->settings->msgToPost){
-            return $post;
+
+    if(!isError($htmlAfterSubmit)){
+        $posts=getPosts($htmlAfterSubmit,$url,true);
+        if($posts===false){
+            return false;
+        }
+        foreach($posts->posts as $post){
+            if($post->by==$data->settings->username && $post->content=$data->settings->msgToPost){
+                return $post;
+            }
         }
     }
     return false;
@@ -346,4 +349,21 @@ function getRecentPost(&$webClient,$url){
     return $lastPost;
 }
 
+function isError($html){
+    $error_string="an error has occurred!";
+    $dom=str_get_html($html);
+    $title=$dom->find("title");
+    $body_error=$dom->find("tr.titlebg td");
+    $body_error_found=false;
+    foreach($body_error as $body_error_single){
+        if(strtolower($body_error_single->plaintext)==$error_string){
+            $body_error_found=true;
+            break;
+        }
+    }
+    return (
+        strtolower($title->plaintext)==$error_string ||
+        $body_error_found
+    );
+}
 ?>
