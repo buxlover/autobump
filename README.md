@@ -12,7 +12,7 @@ A simple Autobot to bump your inactive threads once in 24 hours on [BitcoinTalk]
  1. Download/Clone this repo.
  2. Configure data
  3. Add Threads
- 4. Add cron on your server to run process-new.php with duration on your preference.
+ 4. Add cron on your server to run cron.php with duration on your preference.
 
 ## Version
 
@@ -26,20 +26,26 @@ Well. Let's say  this is version 0.0, shall we? That's bad, what happened to pro
 
  Sample config looks like
  ```
- {
- "file": "data.json",
- "settings": {
-  "username": "buxlover",
-  "password": "password",
-  "cookieLength": "-1",
-  "msgToPost": "BUMP"
- },
-
+  {
+      "file": "data.json",
+      "settings": {
+          "username": "bitcointalk username",
+          "password": "base64 encoded password",
+          "cookieLength": "-1",
+          "msgToPost": "BUMP"
+      },
+      "threads": [{
+          "url": "url to your thread"
+      }]
+  }
  ```
+
+### Username and Password
 
  Under **settings** add you __username__ and __password__ to your [BitcoinTalk](https:bitcointalk.org) account. And beware, you must add your password as **Base64 Encoded**. You can do that [here](https://www.base64decode.org/)!
 
-## Add Threads
+### Threads
+
  I think you have guessed how to add threads to **data.json** file.
 
  No? FINE
@@ -52,21 +58,22 @@ Well. Let's say  this is version 0.0, shall we? That's bad, what happened to pro
  ```
  Add this thread object to the **threads array** on data.json file.
  ```
- "threads": [{
- "url": "Your thread URL"
- },{
- "url": "Your second thread URL"
- }]
- }
+ "threads": [
+  {
+    "url": "Your thread URL"
+  },{
+    "url": "Your second thread URL"
+  }
+ ]
  ```
 
 ## Adding Cron Job
  Adding cron job differes on each Operating System and Hosting providers.
 
-[__Ubuntu__](http://askubuntu.com/questions/2368/how-do-i-set-up-a-cron-job)
- [__Windows 7__](https://technet.microsoft.com/en-us/library/cc748993\(v=ws.11\).aspx)
- [__GoDaddy__](https://technet.microsoft.com/en-us/library/cc748993\(v=ws.11\).aspx)
- [__CPanel__](https://confluence2.cpanel.net/display/ALD/Cron+Jobs)
+* [__Ubuntu__](http://askubuntu.com/questions/2368/how-do-i-set-up-a-cron-job)
+* [__Windows 7__](https://technet.microsoft.com/en-us/library/cc748993\(v=ws.11\).aspx)
+* [__GoDaddy__](https://technet.microsoft.com/en-us/library/cc748993\(v=ws.11\).aspx)
+* [__CPanel__](https://confluence2.cpanel.net/display/ALD/Cron+Jobs)
 
  Aah.. you get the point and search according to your situation.
 
