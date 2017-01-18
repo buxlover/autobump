@@ -260,7 +260,7 @@ function deleteBump(&$webClient,$bumpURL){
     //Delete Bump from the Thread
 
     $threadPage=getThreadPage($webClient,$bumpURL);
-    if($posts===false){
+    if($threadPage===false){
         return false;
     }
     $deleteUrl="";
