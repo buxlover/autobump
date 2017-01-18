@@ -361,8 +361,9 @@ function isError($html){
             break;
         }
     }
-    return (
-        strtolower($title->plaintext)==$error_string ||
+    return ((
+        isset($title->plaintext) &&
+        strtolower($title->plaintext)==$error_string ) ||
         $body_error_found
     );
 }
