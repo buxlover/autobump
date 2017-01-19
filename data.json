@@ -6,6 +6,18 @@
         "cookieLength": "-1",
         "msgToPost": "BUMP"
     },
+    "messages":{
+        "isFolder":true,
+        "folder":"D:\\xampp\\htdocs\\autobump\\_docs\\texts",
+        "texts":[
+            "Message 1",
+            "Message 2",
+            "Message 3",
+            "Message 4",
+            "Message 5",
+            "Message 6"
+        ]
+    },
     "threads": [{
         "url": "url"
     }]

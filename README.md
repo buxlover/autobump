@@ -20,6 +20,7 @@ Well. Let's say  this is version 0.0, shall we? That's bad, what happened to pro
 
  So,
  1. 0.1(beta)
+ 2. 0.2(beta)
 
 ## Configure Data
  All configure-able data are available in **data.json** file.
@@ -33,6 +34,16 @@ Well. Let's say  this is version 0.0, shall we? That's bad, what happened to pro
           "password": "base64 encoded password",
           "cookieLength": "-1",
           "msgToPost": "BUMP"
+      },
+      "messages": {
+        "isFolder":true|false,
+        "folder":"Absolute path of the folder of text files",
+        "texts":[
+         "Message 1",
+         "Message 2",
+         "Message 3",
+         "Message 4"
+        ]
       },
       "threads": [{
           "url": "url to your thread"
@@ -67,6 +78,41 @@ Well. Let's say  this is version 0.0, shall we? That's bad, what happened to pro
  ]
  ```
 
+## Message to Post on Thread
+ From the version **0.2**, you can add Custom Message to post to the thread. Don't worry if you have older version data file, it'll defaultly take the **BUMP** message from the Settings object. Well, if you want some custom message to post to your thread instead of BUMP, you can easily do that in previous version too, by using ___"msgToPost"___ variable available in ___"settings"___ object. But, you can give only string. I just think, it'd be cool if you can post some different message to different thread of yours. It's boring to post same message to all threads, eh! BUMP!! BUMP!! BUMP!! aaaaahh. ** Alright, let's get to the point.**
+
+ ```
+ "messages": {
+  "isFolder":true|false,
+  "folder":"Absolute path of the folder of text files",
+  "texts":[
+   "Message 1",
+   "Message 2",
+   "Message 3",
+   "Message 4"
+   ]
+ }
+ ```
+> _"isFolder"_:
+> can contain either TRUE or FALSE. Tells the system whether text is available as files in a folder.
+>
+> _"folder"_:
+> Absolute path of the folder where all files exist.
+>
+> _"texts"_:
+> This is a backup system. If folder fails or you don't want to create numerous files with large texts, you can use
+> this function to provide a array of string with messages.
+
+Okay. The system works like:
+
+ 1. It checks for the ___"isFolder"___ for true. If it's true, then read the files from the given ___"folder"___.
+ 2. If above condition is false, then it'll look into ___"texts"___ array to fetch all give strings(messages).
+ 3. If above two condition fails, it'll take the default message ___"msgToPost"___ from ___"settings"___ object.
+
+>
+>_From  the available options taken above, system will take any one randomly to post reply to the given thread._
+>
+
 ## Adding Cron Job
  Adding cron job differes on each Operating System and Hosting providers.
 
@@ -86,3 +132,4 @@ This repo is being provided under [MIT](https://en.wikipedia.org/wiki/MIT_Licens
 ## Credits
  I'll add all people who contributed to this repo.
  * [BuxLover](https://bitcointalk.org/index.php?action=profile;u=558835)(aah! That's me)
+ * [Carlo Denaro](https://github.com/blackout314) ([Commits](https://github.com/buxlover/autobump/commits?author=blackout314))

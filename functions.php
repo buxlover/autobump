@@ -221,7 +221,7 @@ function bumpIt(&$webClient,$replyURL){
         "topic"=>$form->find('input[name="topic"]')[0]->getAttribute("value"),
         "subject"=>$form->find('input[name="subject"]')[0]->getAttribute("value"),
         "icon"=>"xx",
-        "message"=>$data->settings->msgToPost,
+        "message"=>getMessageToPost(),
         "notify"=>"1",
         "do_watch"=>"0",
         "do_watch"=>"1",
@@ -367,4 +367,67 @@ function isError($html){
         $body_error_found
     );
 }
+
+function getMessageToPost(){
+    global $data;
+
+    if($data==NULL){
+        loadAllThreads();
+    }
+    $is_file=false;
+    $texts=array();
+
+    # Check whether Folder is enabled, if yes, read files from the
+    # given folder.
+    if(isset($data->messages->isFolder) && $data->messages->isFolder && file_exists($data->messages->folder)){
+        $texts=array_diff(
+            scandir($data->messages->folder),
+            array(".","..")
+        );
+        $is_file=true;
+    }
+    if(count($texts)==0 && isset($data->messages->texts) && count($data->messages->texts)>0){
+        # if there is no folder exists in the path provided in settings
+        # or isFolder is "false", check for "texts" property for text
+        # contents. It will be an array of strings
+        $texts=$data->messages->texts;
+        $is_file=false;
+    }
+
+    if(count($texts)==0){
+        # if no options said above is mentioned.
+        # Either, user is not upgraded settings file
+        # default message as per older settings.
+        $texts=array($data->settings->msgToPost);
+        $is_file=false;
+    }
+    if(count($texts)==1){
+        return $texts[0];
+    }
+
+    # Re-arrange the indices of the items
+    sort($texts);
+
+    # Maximumm number to get random index
+    $max=count($texts)-1;
+
+    $text=$texts[rand(0,$max)];
+
+    if($is_file){
+        $path=$data->messages->folder .
+            (
+                substr(
+                    $data->messages->folder,
+                    strlen($data->messages->folder)-2,
+                    1
+                )==DIRECTORY_SEPARATOR?
+                "":
+                DIRECTORY_SEPARATOR
+            ) .
+            $text;
+    }
+
+    return $is_file?file_get_contents($path):$text;
+}
+
 ?>

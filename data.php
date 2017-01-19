@@ -13,7 +13,8 @@ function loadAllThreads(){
     $data=(object)array(
         "file"=>"data.json",
         "settings"=>(object)$json->settings,
-        "threads"=>(array)$json->threads
+        "threads"=>(array)$json->threads,
+        "messages"=>(object)$json->messages
     );
 }
 
