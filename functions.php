@@ -1,10 +1,18 @@
 <?php
-date_default_timezone_set('UTC');
-require_once "config.php";
-require_once "data.php";
-require_once "simple_html_dom.php";
 
+# Including required files to process
+{
+    date_default_timezone_set('UTC');
+    require_once "config.php";
+    require_once "data.php";
+    require_once "simple_html_dom.php";
+}
 
+/**
+# @summary Login to BTCTalk account with the given credentials. Make sure that you have entered correct Username and Password in "data.json" file. Param:WebClient is passed by reference to keep active session throughout the process.
+# @param WebClient(Object[WebClient]): Passed by reference to process all Browser oriented stuffs.
+# @return BOOLEAN(TRUE|FALSE) True if login success, false otherwise
+*/
 function login(&$WebClient){
     global $bitcointalk;
     global $data;
@@ -64,6 +72,11 @@ function login(&$WebClient){
 
 }
 
+/**
+# @summary Logout from the provided BTCTalk account which had been logged out.
+# @param WebClient(Object[WebClient]): Passed by reference to process all Browser oriented stuffs.
+# @return BOOLEAN. True if successfully logged out, false otherwise.
+*/
 function logout(&$webCient){
     global $bitcointalk;
     if(!isset($bitcointalk["logout"]) ||$bitcointalk["logout"]=="" ){
@@ -74,16 +87,12 @@ function logout(&$webCient){
     return $html!==false;
 }
 
-function getThread(&$webClient,$threadIndex){
-    global $data;
-
-    $thread=$data->threads[$threadIndex];
-    curl_setopt($webClient, CURLOPT_HEADER, false);
-    curl_setopt($webClient,CURLOPT_URL,$thread->url);
-    $html=curl_exec($webClient);
-    return $html;
-}
-
+/**
+# @summary Get HTML output for the given URL.
+# @param WebClient(Object[WebClient]): Passed by reference to process all Browser oriented stuffs.
+# @param $url String.
+# @return HTML String if success. false otherwise.
+*/
 function grabPage(&$webClient,$url){
     curl_setopt($webClient, CURLOPT_HEADER, false);
     curl_setopt($webClient,CURLOPT_URL,$url);
@@ -91,6 +100,12 @@ function grabPage(&$webClient,$url){
     return $html;
 }
 
+/**
+# @summary Get HTML page of the thread for the given Index.
+# @param WebClient(Object[WebClient]): Passed by reference to process all Browser oriented stuffs.
+# @param ThreadIndex. Index of the thread to extract from the Database. Here, it's data.json.
+# @return Array of Posts. HTML output of the Thread mentioned in Database. Typically a HTML web page.
+*/
 function getThreadPage(&$webClient,$url){
     $html=grabPage($webClient,$url);
     if($html===false){
@@ -99,6 +114,13 @@ function getThreadPage(&$webClient,$url){
     return getPosts($html,$url);
 }
 
+/**
+# @summary Get array of Posts and related information like Pagination and options of thread for the given HTML string.
+# @param HTML String. Html output of the thread's page.
+# @param URI String. URL/URI of the Thread page that have been passed.
+# @param Debug BOOLEAN (Optional). If set to TRUE, result of the operation will be dumped on screen. Defaultly false.
+# @return ThreadPage Object. Object with Thread page's informmation along with all posts present in the page.
+*/
 function getPosts($html,$url,$debug=false){
     $posts=array();
     $dom=str_get_html($html);
@@ -199,6 +221,12 @@ function getPosts($html,$url,$debug=false){
     return $page;
 }
 
+/**
+# @summary BUMP the thread.
+# @param WebClient(Object[WebClient]): Passed by reference to process all Browser oriented stuffs.
+# @param ReplyUrl URI. URL/URI of the Reply page of the given thread.
+# @return Post Object. Object containing detailed information of the posted BUMP. False otherwise
+*/
 function bumpIt(&$webClient,$replyURL){
     global $data;
     global $bitcointalk;
@@ -254,6 +282,12 @@ function bumpIt(&$webClient,$replyURL){
     return false;
 }
 
+/**
+# @summary Delete the given Bump URL. A Bummp is nothing but a Reply to a thread in general.
+# @param WebClient(Object[WebClient]): Passed by reference to process all Browser oriented stuffs.
+# @param Bump's URI. URL/URI of the Bump that had to be deleted.
+# @return BOOLEAN. True if the given BUMP successfully deleted. False otherwise
+*/
 function deleteBump(&$webClient,$bumpURL){
     global $data;
     global $bitcointalk;
@@ -284,6 +318,12 @@ function deleteBump(&$webClient,$bumpURL){
     return true;
 }
 
+/**
+# @summary Save the Headers of the HTTP response while processing Login operation.
+# @param Options String.
+# @param Header Line String.
+# @return Header size INT. Size of the header line from the HTTP response gotten.
+*/
 function readLoginheader($opts,$header_line){
     global $bitcointalk;
     if (strpos($header_line, ":") === false) {
@@ -294,6 +334,13 @@ function readLoginheader($opts,$header_line){
     return strlen($header_line);
 }
 
+/**
+# @summary Set the Header value to be sent back to server.
+# @param Option String.
+# @param Header Value String.
+# @param Header Array(By Reference)/
+# @return Header Size.
+*/
 function reponseHeaders($opts,$header_line,&$header_array){
     if (strpos($header_line, ":") === false) {
         return strlen($header_line);
@@ -303,6 +350,10 @@ function reponseHeaders($opts,$header_line,&$header_array){
     return strlen($header_line);
 }
 
+/**
+# @summary Preparing WebClient for Browser oriennted operations with all necessary options.
+# @param WebClient(Object[WebClient]): Passed by reference to process all Browser oriented stuffs.
+*/
 function prepareWebClient(&$WebClient){
     global $bitcointalk;
     curl_setopt($WebClient, CURLOPT_HEADER, true);
@@ -315,9 +366,13 @@ function prepareWebClient(&$WebClient){
     curl_setopt($WebClient, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($WebClient, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($WebClient, CURLOPT_FOLLOWLOCATION, true);
-
 }
 
+/**
+# @summary Get the recent post from the give posts.
+# @param Page Array of Posts.
+# @return Post Object.
+*/
 function getLastPost($page){
     $lastPost=NULL;
     foreach($page->posts as $post){
@@ -333,11 +388,22 @@ function getLastPost($page){
     return $lastPost;
 }
 
+/**
+# @summary Check whether given time is older than 24 hours or not.
+# @param Time TIMESTAMP.
+# @return True is the given TimeStamp is older than 24 hours. False  otherwise.
+*/
 function isOlderThan24Hour($time){
     $difference=time() - $time;
     return round($difference/(60*60),2)>24.00;
 }
 
+/**
+# @summary Get the recent post for the given Thread. Typically the most recent post comparing all pages.
+# @param WebClient(Object[WebClient]): Passed by reference to process all Browser oriented stuffs.
+# @param Thread's URL URI.
+# @return Post Object.
+*/
 function getRecentPost(&$webClient,$url){
     $postsFirstPage=getThreadPage($webClient,$url);
     $lastPost=getLastPost($postsFirstPage);
@@ -349,6 +415,11 @@ function getRecentPost(&$webClient,$url){
     return $lastPost;
 }
 
+/**
+# @summary Check whether there is any error sent from the Server against its HTML output.
+# @param HTML output STRING.
+# @return True if there is any error. False otherwise
+*/
 function isError($html){
     $error_string="an error has occurred!";
     $dom=str_get_html($html);
@@ -368,6 +439,10 @@ function isError($html){
     );
 }
 
+/**
+# @summary Get the Random message to post as reply. Introduced in version 0.2, you can post any custom message instead of classic "BUMP" message.
+# @return Message STRING.
+*/
 function getMessageToPost(){
     global $data;
 

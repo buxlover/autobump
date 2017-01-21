@@ -2,7 +2,8 @@
 
 require_once "functions.php";
 
-// Initializing cURL
+__INITIATE_CRON__:
+
 $webClient=curl_init();
 prepareWebClient($webClient);
 loadAllThreads();
@@ -41,6 +42,6 @@ foreach($data->threads as $thread){
 }
 saveData();
 
-__END__:
+__END_CRON__:
 
 ?>

@@ -8,7 +8,6 @@ $data=NULL;
 /*
 Don't change the following things.
 Following settings are basic settings to connect to BitcoinTalk.
-
 */
 $bitcointalk["loginUrl"]="https://bitcointalk.org/index.php?action=login2";
 $bitcointalk["cookieLength"]="-1";
