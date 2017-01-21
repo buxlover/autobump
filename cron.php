@@ -19,8 +19,18 @@ foreach($data->threads as $thread){
 
         if(isOlderThan24Hour($lastPost->at)){
             login($webClient);
-            $threadPage=getThreadPage($webClient,$thread->url);
 
+            if(isset($data->settings->lastPostAt)){
+                $secondsFromLastPost=intval((time() - $data->settings->lastPostAt) / 1000);
+                if(minPostInterval(getUserActivity($webClient)) > $secondsFromLastPost){
+                    # User is not eligible to post reply to his thread.
+                    # Spo, it's better to break the whole operation for now.
+                    # We can take care of BUMP'ing later on next run.
+                    break;
+                }
+            }
+            $userActivity=getUserActivity($webClient);
+            $threadPage=getThreadPage($webClient,$thread->url);
             if(isset($threadPage->options["Reply"])){
 
                 if(isset($thread->lastBumpURL) && $thread->lastBumpURL!=""){
@@ -31,6 +41,7 @@ foreach($data->threads as $thread){
                 if($bump!==false){
                     $thread->lastBumpURL=$bump->buttons["permalink"];
                     $thread->lastActivityAt=time();
+                    $data->settings->lastPostAt=time();
                 }
                 logout($webClient);
             }

@@ -1,8 +1,8 @@
 {
     "file": "data.json",
     "settings": {
-        "username": "bitcointalk username",
-        "password": "base64 encoded password",
+        "username": "vino.gcs",
+        "password": "c2hha2lkMTk4OQ==",
         "cookieLength": "-1",
         "msgToPost": "BUMP"
     },

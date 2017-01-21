@@ -43,11 +43,9 @@ function login(&$WebClient){
     curl_setopt($WebClient, CURLOPT_POSTFIELDS, $dataToPost);
     curl_setopt($WebClient, CURLOPT_HEADERFUNCTION, 'readLoginheader');
     $html=curl_exec($WebClient);
-
     if($html===false){
         return false;
     }else{
-
         if(!in_array("Refresh",$bitcointalk["afterLoginHeaders"])){
             return false;
         }
@@ -66,7 +64,6 @@ function login(&$WebClient){
             }
         }
     }
-
     $bitcointalk["isLoggedIn"]=true;
     return true;
 
@@ -504,5 +501,52 @@ function getMessageToPost(){
 
     return $is_file?file_get_contents($path):$text;
 }
+
+/**
+# @summary Get Activity of the logged in User.
+# @param WebClient(Object[WebClient]): Passed by reference to process all Browser oriented stuffs.
+# @return Activity INT. Acitivity of the user who logged in.
+*/
+function getUserActivity(&$webClient){
+    $uri="https://bitcointalk.org/index.php?action=profile";
+    $html=grabPage($webClient,$uri);
+    if($html===false){
+        return false;
+    }
+    $dom=str_get_html($html);
+    $tdList=$dom->find(".windowbg tbody tr td");
+    return intval($tdList[5]->plaintext);
+}
+
+/**
+# @summary Get the Minimum required interval between each posts for the logged in user in seconds.
+# @param  Activity INT. Activity of the User.
+# @return Interval in Seconds INT.
+*/
+function minPostInterval($activity){
+    $time = 360; // seconds
+    if($activity >= 15){
+        $time = intval(90 - $activity);
+    }
+    if($activity >= 60){
+        $time = intval(34.7586 - (0.0793103 * $activity));
+    }
+    if($activity >= 100){
+        $time = max(intval(14 - $activity/50),4);
+    }
+    return $time;
+}
+
+
+############################################################################################################################################
+#    Place write the Test Code
+############################################################################################################################################
+$webClient=curl_init();
+prepareWebClient($webClient);
+login($webClient)===false;
+$activity=getUserActivity($webClient);
+echo minPostInterval($activity);
+logout($webClient);
+
 
 ?>
